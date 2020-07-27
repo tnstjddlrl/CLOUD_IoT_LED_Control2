@@ -1,0 +1,68 @@
+public class MainActivity extends AppCompatActivity {
+
+    //사용할 객체 선언
+    Button btn_LED_ON;
+    Button btn_LED_OFF;
+    TextView textView;
+    ImageView toggle;
+
+    //파이어 베이스 연동.
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference("RED_LED_STATUS");
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        this.InitializeView();
+        this.SetListener();
+    }
+    //객체를 xml과 연동한다.
+    public void InitializeView() {
+        btn_LED_ON = (Button)findViewById(R.id.btn1);
+        btn_LED_OFF = (Button)findViewById(R.id.btn2);
+        textView = (TextView)findViewById(R.id.textView);
+        toggle = (ImageView)findViewById(R.id.imageView);
+        setTitle("LED Remote Control");
+        textView.setText(myRef.getKey());
+    }
+    //파이어베이스의 값이 변화가 있을때
+    //텍스트뷰의 글자를 수정한다.
+    public void SetListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String ledState = (String) dataSnapshot.getValue();
+                textView.setText("LED is " + ledState);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //켜기 버튼을 눌렀을때.
+        btn_LED_ON.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textView.setBackgroundColor(Color.RED);
+                textView.setTextColor(Color.WHITE);
+                myRef.setValue("ON");
+                toggle.setImageResource(R.drawable.bb);
+            }
+        });
+
+        // 끄기 버튼을 눌렀을때
+        btn_LED_OFF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textView.setBackgroundColor(Color.WHITE);
+                textView.setTextColor(Color.BLACK);
+                myRef.setValue("OFF");
+                toggle.setImageResource(R.drawable.aa);
+            }
+        });
+    }
+    }
