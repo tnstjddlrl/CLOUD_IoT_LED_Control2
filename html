@@ -1,0 +1,58 @@
+<html>
+<head>
+</head>
+  <body>
+      <p>클라우드 기반의 iot 전등 제어하기</p>
+      <h1 id="OUT_TEXT"></h1>
+      <button class = "on-button" id= "onBtn" onclick="onFunction()">LED ON</button>
+      <button class = "off-button" id="offBtn" onclick="offFunction()">LED OFF</button>
+
+      <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>       
+     <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-database.js"></script>
+
+     <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyCTu0pS--3IfkafTf82exGA2-eg9J3h_dA",
+    authDomain: "ledcontrol-157b9.firebaseapp.com",
+    databaseURL: "https://ledcontrol-157b9.firebaseio.com",
+    projectId: "ledcontrol-157b9",
+    storageBucket: "ledcontrol-157b9.appspot.com",
+    messagingSenderId: "435257382408",
+    appId: "1:435257382408:web:ac0886c23096d5f32663bd"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    </script>
+
+      <script>
+        // getting the text value from the database
+        var led_one = document.getElementById('ON_BUTTON');
+        var led_off = document.getElementById('OFF_BUTTON');
+
+        var dbRef = firebase.database().ref().child('RED_LED_STATUS');
+
+        function onFunction() {
+            dbRef.set('ON')
+        }
+
+        function offFunction() {
+            dbRef.set('OFF')
+        }
+
+        dbRef.on("value", function(snapshot) {
+
+          if (snapshot.val() == 'ON') {
+            OUT_TEXT.innerText = 'LED is ON';
+          } else if (snapshot.val() == 'OFF'){
+            OUT_TEXT.innerText = 'LED is OFF';
+          }
+
+        }, function (error) {
+          console.log("Error: " + error.code);
+        });
+      </script>
+    </body>
+</html>
